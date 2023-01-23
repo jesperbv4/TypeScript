@@ -11,12 +11,12 @@ type Table<K, V> = null | Tree<Pair<K, V>>;
     ONLY add types, and otherwise DO NOT modify the code.
 */
 
-function make_table() {
+function make_table(): null {
     return null;
 }
 
 // Adds (or updates) a key => value mapping in the table
-function table_insert(t, k, v) {
+function table_insert<K,V>(t: Table<K, V>, k: K, v: V): Table<K, V> {
     return t === null
         ? make_leaf(pair(k, v))
         : head(value(t)) === k
@@ -26,11 +26,11 @@ function table_insert(t, k, v) {
         : make_tree(value(t), left_branch(t), table_insert(right_branch(t), k, v));
 }
 
-function table_has_key(t, k)  {
+function table_has_key<K, V>(t: Table<K, V>, k: K): boolean  {
     return table_get_value(t, k) !== null;
 }
 
-function table_get_value(t, k) {
+function table_get_value<K, V>(t: Table<K, V>, k: K): V | null {
     return t === null
         ? null
         : head(value(t)) === k
@@ -40,8 +40,8 @@ function table_get_value(t, k) {
         : table_get_value(right_branch(t), k);
 }
 
-function display_table(t) {
-    function concat(t) {
+function display_table<K, V>(t: Table<K, V>): string | void {
+    function concat<K, V>(t: Table<K, V>): string  {
         return is_empty_tree(t)
             ? ""
             : concat(left_branch(t)) + " ("+ value(t) + "), " + concat(right_branch(t))
@@ -50,9 +50,9 @@ function display_table(t) {
 }
 
 // Small test program
-const keys = ["b", "a", "c"];
-const values = [2, 1, 3];
-let table = make_table();
+const keys: string[] = ["b", "a", "c"];
+const values: number[] = [2, 1, 3];
+let table: Table<string, number> = make_table();
 for (let i = 0; i < keys.length; i = i + 1) {
     table = table_insert(table, keys[i], values[i]);
 }
@@ -64,12 +64,12 @@ display_table(table);
 */
 
 // define the following types:
-type BinaryExp = any;
-type Variable = any;
-type Literal = any;
-type Invalid = any;
+type BinaryExp = [string, [Exp, Exp]];
+type Variable = Pair<string, string> ;
+type Literal = Pair<string, number>;
+type Invalid = Pair<string, unknown>;
 
-function make_binary_expression(tag, lhs, rhs) {
+function make_binary_expression(tag: string, lhs: Exp, rhs: Exp): BinaryExp {
     if (tag === "+" || tag === "-" || tag === "*" || tag === "/") {
         return pair(tag, pair(lhs, rhs));
     } else {
@@ -77,60 +77,60 @@ function make_binary_expression(tag, lhs, rhs) {
     }
 }
 
-function get_lhs(exp) {
+function get_lhs(exp: BinaryExp): Exp {
     return head(tail(exp));
 }
 
-function get_rhs(exp) {
+function get_rhs(exp:BinaryExp ): Exp {
     return tail(tail(exp));
 }
 
-function make_add(lhs, rhs) {
+function make_add(lhs: Exp , rhs: Exp ): BinaryExp {
     return make_binary_expression("+", lhs, rhs);
 }
 
-function make_sub(lhs, rhs) {
+function make_sub(lhs: Exp, rhs: Exp): BinaryExp {
     return make_binary_expression("-", lhs, rhs);
 }
 
-function make_mul(lhs, rhs) {
+function make_mul(lhs: Exp, rhs: Exp): BinaryExp {
     return make_binary_expression("*", lhs, rhs);
 }
 
-function make_div(lhs, rhs) {
+function make_div(lhs: Exp, rhs: Exp): BinaryExp {
     return make_binary_expression("/", lhs, rhs);
 }
 
-function make_number(num) {
+function make_number(num: number): Pair<string, number> {
     return pair("number", num);
 }
 
-function make_variable(name) {
+function make_variable(name: string): Variable {
     return pair("variable", name);
 }
 
-function is_binary(exp) {
+function is_binary(exp: Exp): exp is BinaryExp {
     const tag = head(exp);
     return tag === "+" || tag === "-" || tag === "*" || tag === "/";
 }
 
-function needs_parentheses(exp) {
+function needs_parentheses(exp: BinaryExp): boolean {
     const tag = head(exp);
     return tag === "+" || tag === "-";
 }
-function get_operator(exp) { return head(exp); }
+function get_operator(exp: BinaryExp): string { return head(exp); }
 
-function is_add(exp) { return head(exp) === "+"; }
-function is_sub(exp) { return head(exp) === "-"; }
-function is_mul(exp) { return head(exp) === "*"; }
-function is_div(exp) { return head(exp) === "/"; }
+function is_add(exp: BinaryExp): boolean { return head(exp) === "+"; }
+function is_sub(exp: BinaryExp): boolean { return head(exp) === "-"; }
+function is_mul(exp: BinaryExp): boolean { return head(exp) === "*"; }
+function is_div(exp: BinaryExp): boolean { return head(exp) === "/"; }
 
 // do not modify the function is_number
 function is_number(exp: Exp): exp is Literal { return head<string, any>(exp) === "number"; }
 
-function get_value(exp) { return tail(exp); }
-function is_variable(exp) { return head(exp) === "variable"; }
-function get_var_name(exp) { return tail(exp); }
+function get_value(exp: Literal): number { return tail(exp); }
+function is_variable(exp: Exp): exp is Variable { return head(exp) === "variable"; }
+function get_var_name(exp: Variable): string { return tail(exp); }
 
 function evaluate(exp, env) {
     function evaluate_binary(bin_exp) {
@@ -185,3 +185,4 @@ function pretty_print(exp: Exp) {
 //console.log(pretty_print(exp1));
 // prints: 5 + 6 * 8 * 5 + 6 + 8
 //console.log(pretty_print(exp2));
+

@@ -1,27 +1,35 @@
 "use strict";
 exports.__esModule = true;
+exports.is_empty_tree = exports.make_empty_tree = exports.make_leaf = exports.make_tree = exports.right_branch = exports.left_branch = exports.value = void 0;
 var list_1 = require("../lib/list");
 function value(tree) {
     return (0, list_1.head)(tree);
 }
+exports.value = value;
 function left_branch(tree) {
     return (0, list_1.head)((0, list_1.tail)(tree));
 }
+exports.left_branch = left_branch;
 function right_branch(tree) {
     return (0, list_1.tail)((0, list_1.tail)(tree));
 }
+exports.right_branch = right_branch;
 function make_tree(value, left, right) {
     return (0, list_1.pair)(value, (0, list_1.pair)(left, right));
 }
+exports.make_tree = make_tree;
 function make_leaf(value) {
     return make_tree(value, make_empty_tree(), make_empty_tree());
 }
+exports.make_leaf = make_leaf;
 function make_empty_tree() {
     return null;
 }
+exports.make_empty_tree = make_empty_tree;
 function is_empty_tree(tree) {
     return tree === null;
 }
+exports.is_empty_tree = is_empty_tree;
 // convenience function to print a tree in a simple textual format
 function display_tree(tree) {
     return display_tree_helper(tree, "", true);
@@ -82,9 +90,9 @@ function path_for_element(tree, element) {
     }
     return path(tree, element, "");
 }
-var list1 = (0, list_1.list)(5, 3, 1, 4, 7, 9);
-var tree1 = build_tree(list1);
-console.log(path_for_element(tree1, 9)); // Should display: RR
-console.log(path_for_element(tree1, 4)); // Should display: LR
-console.log(path_for_element(tree1, 1)); // Should display: LL
-console.log(path_for_element(tree1, 0)); // Should display: null
+// const list1 = list(5, 3, 1, 4, 7, 9);
+// const tree1 = build_tree(list1);
+// console.log(path_for_element(tree1, 9)); // Should display: RR
+// console.log(path_for_element(tree1, 4)); // Should display: LR
+// console.log(path_for_element(tree1, 1)); // Should display: LL
+// console.log(path_for_element(tree1, 0)); // Should display: null

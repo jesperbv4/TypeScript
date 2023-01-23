@@ -1,37 +1,37 @@
 import { head, tail, pair, List, list} from '../lib/list';
 
-type Tree<T> = Leaf | TreeNode<T>;
-type Leaf = null;
-type TreeNode<T> = [T, [Tree<T>, Tree<T>]];
+export type Tree<T> = Leaf | TreeNode<T>;
+export type Leaf = null;
+export type TreeNode<T> = [T, [Tree<T>, Tree<T>]];
 
 
-function value<T>(tree: TreeNode<T>): T {
+export function value<T>(tree: TreeNode<T>): T {
 	return head(tree);
 }
 
-function left_branch<T>(tree: TreeNode<T>): Tree<T> {
+export function left_branch<T>(tree: TreeNode<T>): Tree<T> {
 	return head(tail(tree));
 }
 
-function right_branch<T>(tree: TreeNode<T>): Tree<T> {
+export function right_branch<T>(tree: TreeNode<T>): Tree<T> {
 	return tail(tail(tree));
 }
 
-function make_tree<T>(value: T, left: Tree<T>, right: Tree<T>): Tree<T> {
+export function make_tree<T>(value: T, left: Tree<T>, right: Tree<T>): Tree<T> {
 	return pair(value, pair(left, right));
 }
 
-function make_leaf<T>(value: T): Tree<T> {
+export function make_leaf<T>(value: T): Tree<T> {
 	return make_tree(value,
                  	make_empty_tree(),
                  	make_empty_tree());
 }
 
-function make_empty_tree<T>(): Tree<T> {
+export function make_empty_tree(): null{
 	return null;
 }
 
-function is_empty_tree<T>(tree: Tree<T>): tree is null {
+export function is_empty_tree<T>(tree: Tree<T>): tree is null {
 	return tree === null;
 }
 
@@ -104,10 +104,10 @@ function path_for_element<T>(tree: Tree<T>, element: T): string | null {
 	return path(tree, element, "");
 }
 
-const list1 = list(5, 3, 1, 4, 7, 9);
-const tree1 = build_tree(list1);
+// const list1 = list(5, 3, 1, 4, 7, 9);
+// const tree1 = build_tree(list1);
 
-console.log(path_for_element(tree1, 9)); // Should display: RR
-console.log(path_for_element(tree1, 4)); // Should display: LR
-console.log(path_for_element(tree1, 1)); // Should display: LL
-console.log(path_for_element(tree1, 0)); // Should display: null
+// console.log(path_for_element(tree1, 9)); // Should display: RR
+// console.log(path_for_element(tree1, 4)); // Should display: LR
+// console.log(path_for_element(tree1, 1)); // Should display: LL
+// console.log(path_for_element(tree1, 0)); // Should display: null
