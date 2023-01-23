@@ -173,12 +173,11 @@ console.log(evaluate(exp2, table));
     TASK 3: implement and type the function pretty-print
     DO NOT change the signature of this function, i.e. the number of arguments etc.
 */
-function pretty_print(exp: Exp): string | Exp {
-    function print_binary(bin_exp: BinaryExp){
+function pretty_print(exp: Exp): string {
+    function print_binary(bin_exp: BinaryExp): string {
         const lhs = get_lhs(bin_exp);
         const rhs = get_rhs(bin_exp);
-        return pretty_print(lhs).toString() +" "+ get_operator(bin_exp).toString() +" "+ pretty_print(rhs).toString();
-
+        return pretty_print(lhs) +" "+ print_operator(bin_exp) +" "+ pretty_print(rhs);
     }
     function print_literal(exp: Literal): string{
         return get_value(exp).toString();
@@ -186,7 +185,16 @@ function pretty_print(exp: Exp): string | Exp {
     function print_variable(exp: Variable): string {
         return get_var_name(exp);
     }
-    
+    function print_operator(exp: BinaryExp): string {
+        return get_operator(exp).toString();
+    }
+    function print_para(exp: BinaryExp): string {
+        if (is_number(get_lhs(exp))) {
+            return "(" + print_binary(exp);
+        } else {
+            return print_binary(exp) + ")"
+        }
+    }
     return is_number(exp)
         ? print_literal(exp)
         : is_variable(exp)

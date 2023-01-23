@@ -138,10 +138,11 @@ console.log(evaluate(exp2, table));
     DO NOT change the signature of this function, i.e. the number of arguments etc.
 */
 function pretty_print(exp) {
+    var state = false;
     function print_binary(bin_exp) {
         var lhs = get_lhs(bin_exp);
         var rhs = get_rhs(bin_exp);
-        return pretty_print(lhs).toString() + " " + get_operator(bin_exp).toString() + " " + pretty_print(rhs).toString();
+        return pretty_print(lhs) + " " + print_operator(bin_exp) + " " + pretty_print(rhs);
     }
     function print_literal(exp) {
         return get_value(exp).toString();
@@ -149,11 +150,25 @@ function pretty_print(exp) {
     function print_variable(exp) {
         return get_var_name(exp);
     }
-    return is_number(exp)
-        ? print_literal(exp)
-        : is_variable(exp)
-            ? print_variable(exp)
-            : print_binary(exp);
+    function print_operator(exp) {
+        return get_operator(exp).toString();
+    }
+    function print_para(exp) {
+        if (!state && is_number(get_lhs(exp))) {
+            state = true;
+            return "(" + print_binary(exp);
+        }
+        else {
+            return print_binary(exp) + ")";
+        }
+    }
+    return needs_parentheses(exp)
+        ? print_para(exp)
+        : is_number(exp)
+            ? print_literal(exp)
+            : is_variable(exp)
+                ? print_variable(exp)
+                : print_binary(exp);
 }
 /*
     Test code for task 3
