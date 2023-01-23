@@ -40,7 +40,7 @@ function table_get_value<K, V>(t: Table<K, V>, k: K): V | null {
         : table_get_value(right_branch(t), k);
 }
 
-function display_table<K, V>(t: Table<K, V>): string | void {
+function display_table<K, V>(t: Table<K, V>): void {
     function concat<K, V>(t: Table<K, V>): string  {
         return is_empty_tree(t)
             ? ""
@@ -101,7 +101,7 @@ function make_div(lhs: Exp, rhs: Exp): BinaryExp {
     return make_binary_expression("/", lhs, rhs);
 }
 
-function make_number(num: number): Pair<string, number> {
+function make_number(num: number): Literal {
     return pair("number", num);
 }
 
@@ -114,7 +114,7 @@ function is_binary(exp: Exp): exp is BinaryExp {
     return tag === "+" || tag === "-" || tag === "*" || tag === "/";
 }
 
-function needs_parentheses(exp: BinaryExp): boolean {
+function needs_parentheses(exp: Exp): boolean {
     const tag = head(exp);
     return tag === "+" || tag === "-";
 }
@@ -132,10 +132,10 @@ function get_value(exp: Literal): number { return tail(exp); }
 function is_variable(exp: Exp): exp is Variable { return head(exp) === "variable"; }
 function get_var_name(exp: Variable): string { return tail(exp); }
 
-function evaluate(exp, env) {
-    function evaluate_binary(bin_exp) {
-        const lhs = evaluate(get_lhs(bin_exp), env);
-        const rhs = evaluate(get_rhs(bin_exp), env);
+function evaluate<V>(exp: Exp, env: Table<string, V>): Literal | Exp {
+    function evaluate_binary(bin_exp: BinaryExp): Literal | BinaryExp {
+        const lhs: Exp = evaluate(get_lhs(bin_exp), env);
+        const rhs: Exp = evaluate(get_rhs(bin_exp), env);
         if (is_number(lhs) && is_number(rhs)) {
             return is_add(bin_exp) ? make_number(get_value(lhs) + get_value(rhs))
                 : is_sub(bin_exp) ? make_number(get_value(lhs) - get_value(rhs))
@@ -145,7 +145,7 @@ function evaluate(exp, env) {
             return make_add(lhs, rhs);
         }
     }
-    function evaluate_variable(exp) {
+    function evaluate_variable(exp: Variable): Literal | Exp {
         const var_name = get_var_name(exp);
         return table_has_key(env, var_name)
             ? make_number(table_get_value(env, var_name) as number)
@@ -173,16 +173,35 @@ console.log(evaluate(exp2, table));
     TASK 3: implement and type the function pretty-print
     DO NOT change the signature of this function, i.e. the number of arguments etc.
 */
-function pretty_print(exp: Exp) {
-    // write your code here
-}
+function pretty_print(exp: Exp): string | Exp {
+    function print_binary(bin_exp: BinaryExp){
+        const lhs = get_lhs(bin_exp);
+        const rhs = get_rhs(bin_exp);
+        return pretty_print(lhs).toString() +" "+ get_operator(bin_exp).toString() +" "+ pretty_print(rhs).toString();
 
+    }
+    function print_literal(exp: Literal): string{
+        return get_value(exp).toString();
+    }
+    function print_variable(exp: Variable): string {
+        return get_var_name(exp);
+    }
+    
+    return is_number(exp)
+        ? print_literal(exp)
+        : is_variable(exp)
+        ? print_variable(exp as Variable)
+        : print_binary(exp as BinaryExp);
+
+
+}
 /*
     Test code for task 3
 */
 
+console.log(2 + "+" + 3);
 // prints: (5 + 6 * 8) * (5 + 6 + 8)
-//console.log(pretty_print(exp1));
+console.log(pretty_print(exp1));
 // prints: 5 + 6 * 8 * 5 + 6 + 8
-//console.log(pretty_print(exp2));
+console.log(pretty_print(exp2));
 

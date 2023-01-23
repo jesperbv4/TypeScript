@@ -48,110 +48,118 @@ for (var i = 0; i < keys.length; i = i + 1) {
     table = table_insert(table, keys[i], values[i]);
 }
 display_table(table);
-// /*
-// /*
-//     TASK 2: type the following Expression functions
-//     ONLY add types, and otherwise DO NOT modify the code.
-// */
-// // define the following types:
-// type BinaryExp = any;
-// type Variable = any;
-// type Literal = any;
-// type Invalid = any;
-// function make_binary_expression(tag, lhs, rhs) {
-//     if (tag === "+" || tag === "-" || tag === "*" || tag === "/") {
-//         return pair(tag, pair(lhs, rhs));
-//     } else {
-//         return pair("+", pair(lhs, rhs));
-//     }
-// }
-// function get_lhs(exp) {
-//     return head(tail(exp));
-// }
-// function get_rhs(exp) {
-//     return tail(tail(exp));
-// }
-// function make_add(lhs, rhs) {
-//     return make_binary_expression("+", lhs, rhs);
-// }
-// function make_sub(lhs, rhs) {
-//     return make_binary_expression("-", lhs, rhs);
-// }
-// function make_mul(lhs, rhs) {
-//     return make_binary_expression("*", lhs, rhs);
-// }
-// function make_div(lhs, rhs) {
-//     return make_binary_expression("/", lhs, rhs);
-// }
-// function make_number(num) {
-//     return pair("number", num);
-// }
-// function make_variable(name) {
-//     return pair("variable", name);
-// }
-// function is_binary(exp) {
-//     const tag = head(exp);
-//     return tag === "+" || tag === "-" || tag === "*" || tag === "/";
-// }
-// function needs_parentheses(exp) {
-//     const tag = head(exp);
-//     return tag === "+" || tag === "-";
-// }
-// function get_operator(exp) { return head(exp); }
-// function is_add(exp) { return head(exp) === "+"; }
-// function is_sub(exp) { return head(exp) === "-"; }
-// function is_mul(exp) { return head(exp) === "*"; }
-// function is_div(exp) { return head(exp) === "/"; }
-// // do not modify the function is_number
-// function is_number(exp: Exp): exp is Literal { return head<string, any>(exp) === "number"; }
-// function get_value(exp) { return tail(exp); }
-// function is_variable(exp) { return head(exp) === "variable"; }
-// function get_var_name(exp) { return tail(exp); }
-// function evaluate(exp, env) {
-//     function evaluate_binary(bin_exp) {
-//         const lhs = evaluate(get_lhs(bin_exp), env);
-//         const rhs = evaluate(get_rhs(bin_exp), env);
-//         if (is_number(lhs) && is_number(rhs)) {
-//             return is_add(bin_exp) ? make_number(get_value(lhs) + get_value(rhs))
-//                 : is_sub(bin_exp) ? make_number(get_value(lhs) - get_value(rhs))
-//                 : is_mul(bin_exp) ? make_number(get_value(lhs) * get_value(rhs))
-//                 :               make_number(get_value(lhs) / get_value(rhs));
-//         } else {
-//             return make_add(lhs, rhs);
-//         }
-//     }
-//     function evaluate_variable(exp) {
-//         const var_name = get_var_name(exp);
-//         return table_has_key(env, var_name)
-//             ? make_number(table_get_value(env, var_name) as number)
-//             : exp;
-//     }
-//     return is_number(exp)
-//         ? exp
-//         : is_variable(exp)
-//         ? evaluate_variable(exp as Variable)
-//         : evaluate_binary(exp as BinaryExp);
-// }
-// /*
-//     Test code for task 2
-// */
-// const exp1 = make_mul(make_add(make_number(5), make_mul(make_number(6), make_number(8))), make_add(make_number(5), make_add(make_number(6), make_number(8))));
-// const exp2 = make_add(make_number(5), make_add(make_mul(make_number(6), make_mul(make_number(8), make_number(5))), make_add(make_number(6), make_number(8))));
-// // prints: [ 'number', 1007 ]
-// console.log(evaluate(exp1, table));
-// // prints: [ 'number', 259 ]
-// console.log(evaluate(exp2, table));
-// /*
-//     TASK 3: implement and type the function pretty-print
-//     DO NOT change the signature of this function, i.e. the number of arguments etc.
-// */
-// function pretty_print(exp: Exp) {
-//     // write your code here
-// }
-// /*
-//     Test code for task 3
-// */
-// // prints: (5 + 6 * 8) * (5 + 6 + 8)
-// //console.log(pretty_print(exp1));
-// // prints: 5 + 6 * 8 * 5 + 6 + 8
-// //console.log(pretty_print(exp2));
+function make_binary_expression(tag, lhs, rhs) {
+    if (tag === "+" || tag === "-" || tag === "*" || tag === "/") {
+        return (0, list_1.pair)(tag, (0, list_1.pair)(lhs, rhs));
+    }
+    else {
+        return (0, list_1.pair)("+", (0, list_1.pair)(lhs, rhs));
+    }
+}
+function get_lhs(exp) {
+    return (0, list_1.head)((0, list_1.tail)(exp));
+}
+function get_rhs(exp) {
+    return (0, list_1.tail)((0, list_1.tail)(exp));
+}
+function make_add(lhs, rhs) {
+    return make_binary_expression("+", lhs, rhs);
+}
+function make_sub(lhs, rhs) {
+    return make_binary_expression("-", lhs, rhs);
+}
+function make_mul(lhs, rhs) {
+    return make_binary_expression("*", lhs, rhs);
+}
+function make_div(lhs, rhs) {
+    return make_binary_expression("/", lhs, rhs);
+}
+function make_number(num) {
+    return (0, list_1.pair)("number", num);
+}
+function make_variable(name) {
+    return (0, list_1.pair)("variable", name);
+}
+function is_binary(exp) {
+    var tag = (0, list_1.head)(exp);
+    return tag === "+" || tag === "-" || tag === "*" || tag === "/";
+}
+function needs_parentheses(exp) {
+    var tag = (0, list_1.head)(exp);
+    return tag === "+" || tag === "-";
+}
+function get_operator(exp) { return (0, list_1.head)(exp); }
+function is_add(exp) { return (0, list_1.head)(exp) === "+"; }
+function is_sub(exp) { return (0, list_1.head)(exp) === "-"; }
+function is_mul(exp) { return (0, list_1.head)(exp) === "*"; }
+function is_div(exp) { return (0, list_1.head)(exp) === "/"; }
+// do not modify the function is_number
+function is_number(exp) { return (0, list_1.head)(exp) === "number"; }
+function get_value(exp) { return (0, list_1.tail)(exp); }
+function is_variable(exp) { return (0, list_1.head)(exp) === "variable"; }
+function get_var_name(exp) { return (0, list_1.tail)(exp); }
+function evaluate(exp, env) {
+    function evaluate_binary(bin_exp) {
+        var lhs = evaluate(get_lhs(bin_exp), env);
+        var rhs = evaluate(get_rhs(bin_exp), env);
+        if (is_number(lhs) && is_number(rhs)) {
+            return is_add(bin_exp) ? make_number(get_value(lhs) + get_value(rhs))
+                : is_sub(bin_exp) ? make_number(get_value(lhs) - get_value(rhs))
+                    : is_mul(bin_exp) ? make_number(get_value(lhs) * get_value(rhs))
+                        : make_number(get_value(lhs) / get_value(rhs));
+        }
+        else {
+            return make_add(lhs, rhs);
+        }
+    }
+    function evaluate_variable(exp) {
+        var var_name = get_var_name(exp);
+        return table_has_key(env, var_name)
+            ? make_number(table_get_value(env, var_name))
+            : exp;
+    }
+    return is_number(exp)
+        ? exp
+        : is_variable(exp)
+            ? evaluate_variable(exp)
+            : evaluate_binary(exp);
+}
+/*
+    Test code for task 2
+*/
+var exp1 = make_mul(make_add(make_number(5), make_mul(make_number(6), make_number(8))), make_add(make_number(5), make_add(make_number(6), make_number(8))));
+var exp2 = make_add(make_number(5), make_add(make_mul(make_number(6), make_mul(make_number(8), make_number(5))), make_add(make_number(6), make_number(8))));
+// prints: [ 'number', 1007 ]
+console.log(evaluate(exp1, table));
+// prints: [ 'number', 259 ]
+console.log(evaluate(exp2, table));
+/*
+    TASK 3: implement and type the function pretty-print
+    DO NOT change the signature of this function, i.e. the number of arguments etc.
+*/
+function pretty_print(exp) {
+    function print_binary(bin_exp) {
+        var lhs = get_lhs(bin_exp);
+        var rhs = get_rhs(bin_exp);
+        return pretty_print(lhs).toString() + " " + get_operator(bin_exp).toString() + " " + pretty_print(rhs).toString();
+    }
+    function print_literal(exp) {
+        return get_value(exp).toString();
+    }
+    function print_variable(exp) {
+        return get_var_name(exp);
+    }
+    return is_number(exp)
+        ? print_literal(exp)
+        : is_variable(exp)
+            ? print_variable(exp)
+            : print_binary(exp);
+}
+/*
+    Test code for task 3
+*/
+console.log(2 + "+" + 3);
+// prints: (5 + 6 * 8) * (5 + 6 + 8)
+console.log(pretty_print(exp1));
+// prints: 5 + 6 * 8 * 5 + 6 + 8
+console.log(pretty_print(exp2));
