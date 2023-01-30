@@ -87,3 +87,5 @@ export function dequeue<T>(q: Prio_Queue<T>) {
 export function display_queue<T>(q: Prio_Queue<T>) {
     console.log(q[2].slice(q[0], q[1]));
 }
+
+
