@@ -138,42 +138,50 @@ console.log(evaluate(exp2, table));
     DO NOT change the signature of this function, i.e. the number of arguments etc.
 */
 function pretty_print(exp) {
-    var state = false;
-    function print_binary(bin_exp) {
-        var lhs = get_lhs(bin_exp);
-        var rhs = get_rhs(bin_exp);
-        return pretty_print(lhs) + " " + print_operator(bin_exp) + " " + pretty_print(rhs);
-    }
-    function print_literal(exp) {
-        return get_value(exp).toString();
-    }
-    function print_variable(exp) {
-        return get_var_name(exp);
-    }
-    function print_operator(exp) {
-        return get_operator(exp).toString();
-    }
-    function print_para(exp) {
-        if (!state && is_number(get_lhs(exp))) {
-            state = true;
-            return "(" + print_binary(exp);
+    function remove_para(exp) {
+        if (exp[0] === "(") {
+            exp = exp.substring(1, exp.length - 1);
         }
-        else {
-            return print_binary(exp) + ")";
-        }
+        return exp;
     }
-    return needs_parentheses(exp)
-        ? print_para(exp)
-        : is_number(exp)
-            ? print_literal(exp)
+    function print_helper(exp, depth) {
+        function print_bin(bin_exp) {
+            var lhs = print_helper(get_lhs(bin_exp), depth + 1);
+            var rhs = print_helper(get_rhs(bin_exp), depth + 1);
+            if (needs_parentheses(bin_exp)) {
+                lhs = remove_para(lhs);
+                rhs = remove_para(rhs);
+                if (depth === 0) {
+                    return lhs + " " + print_op(bin_exp) + " " + rhs;
+                }
+                else {
+                    return "(" + lhs + " " + print_op(bin_exp) + " " + rhs + ")";
+                }
+            }
+            else {
+                return lhs + " " + print_op(bin_exp) + " " + rhs;
+            }
+        }
+        function print_lit(exp) {
+            return get_value(exp).toString();
+        }
+        function print_var(exp) {
+            return get_var_name(exp);
+        }
+        function print_op(exp) {
+            return get_operator(exp);
+        }
+        return is_number(exp)
+            ? print_lit(exp)
             : is_variable(exp)
-                ? print_variable(exp)
-                : print_binary(exp);
+                ? print_var(exp)
+                : print_bin(exp);
+    }
+    return print_helper(exp, 0);
 }
 /*
     Test code for task 3
 */
-console.log(2 + "+" + 3);
 // prints: (5 + 6 * 8) * (5 + 6 + 8)
 console.log(pretty_print(exp1));
 // prints: 5 + 6 * 8 * 5 + 6 + 8

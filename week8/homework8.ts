@@ -173,41 +173,56 @@ console.log(evaluate(exp2, table));
     TASK 3: implement and type the function pretty-print
     DO NOT change the signature of this function, i.e. the number of arguments etc.
 */
-function pretty_print(exp: Exp): string {
-    function print_binary(bin_exp: BinaryExp): string {
-        const lhs = get_lhs(bin_exp);
-        const rhs = get_rhs(bin_exp);
-        return pretty_print(lhs) +" "+ print_operator(bin_exp) +" "+ pretty_print(rhs);
-    }
-    function print_literal(exp: Literal): string{
-        return get_value(exp).toString();
-    }
-    function print_variable(exp: Variable): string {
-        return get_var_name(exp);
-    }
-    function print_operator(exp: BinaryExp): string {
-        return get_operator(exp).toString();
-    }
-    function print_para(exp: BinaryExp): string {
-        if (is_number(get_lhs(exp))) {
-            return "(" + print_binary(exp);
-        } else {
-            return print_binary(exp) + ")"
+function pretty_print(exp: Exp): string{
+    function remove_para(exp: string): string {
+        if (exp[0] === "(") {
+            exp = exp.substring(1, exp.length - 1);
         }
+        return exp;
     }
-    return is_number(exp)
-        ? print_literal(exp)
-        : is_variable(exp)
-        ? print_variable(exp as Variable)
-        : print_binary(exp as BinaryExp);
 
+    function print_helper(exp: Exp, depth: number): string {
 
+        function print_bin(bin_exp: BinaryExp): string {
+            let lhs = print_helper(get_lhs(bin_exp), depth + 1);
+            let rhs = print_helper(get_rhs(bin_exp), depth + 1);
+            
+            if (needs_parentheses(bin_exp) ) {
+                lhs = remove_para(lhs);
+                rhs = remove_para(rhs);
+                if (depth === 0) {
+                    return lhs + " " + print_op(bin_exp) + " " + rhs;
+                } else {
+                    return "(" + lhs  + " " + print_op(bin_exp) + " " + rhs + ")"; 
+                }
+                
+            } else {
+                return lhs + " " + print_op(bin_exp) + " " + rhs;
+            }
+        }
+        function print_lit(exp: Literal): string {
+            return get_value(exp).toString();
+        }
+        function print_var(exp: Variable): string {
+            return get_var_name(exp);
+        }
+        function print_op(exp: BinaryExp): string {
+            return get_operator(exp);
+        }
+        return is_number(exp)
+            ? print_lit(exp)
+            : is_variable(exp)
+            ? print_var(exp as Variable)
+            : print_bin(exp as BinaryExp);
+
+    }
+    return print_helper(exp, 0);
 }
 /*
     Test code for task 3
 */
 
-console.log(2 + "+" + 3);
+
 // prints: (5 + 6 * 8) * (5 + 6 + 8)
 console.log(pretty_print(exp1));
 // prints: 5 + 6 * 8 * 5 + 6 + 8

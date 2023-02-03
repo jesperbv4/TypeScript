@@ -5,6 +5,7 @@ export type HashFunction<K> = (key: K) => number;
 
 export const hash_id: HashFunction<number> = x => x;
 
+
 export type ChainingHashtable<K, V> = {
     readonly arr:  Array<List<Pair<K, V>>>,
     readonly hash: HashFunction<K>,
@@ -106,10 +107,10 @@ export function ph_empty<K, V>(length: number, probe: ProbingFunction<K>): Probi
 function probe_from<K, V>(tab: ProbingHashtable<K,V>, key: K, i: number): number | undefined {
     function step(i: number): number | undefined {
         const index = tab.probe(tab.length, key, i);
-        return i === tab.length || tab.keys[i] === undefined
+        return i === tab.length || tab.keys[index] === undefined
                    ? undefined
-               : tab.keys[i] === key
-                   ? i
+               : tab.keys[index] === key
+                   ? index
                : step(i + 1);
     }
     return step(i);

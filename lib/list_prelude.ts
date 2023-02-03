@@ -1,4 +1,4 @@
-import { head, tail, pair, list, Pair, List, append, is_null } from '../lib/list';
+import { head, tail, pair, Pair, List, append, is_null } from '../lib/list';
 
 function empty_list<T>(): List<T> {
     return null;
@@ -76,10 +76,10 @@ export function build_list<T>(fun: (i: number) => T, n: number): List<T> {
 // fun is applied element-by-element:
 // for_each(fun, list(1, 2)) results in the calls fun(1) and fun(2).
 export function for_each<T, U>(fun: (arg: T) => U, xs: List<T>): void {
-    if (!is_null(xs)) {
+    while (!is_null(xs)) {
         fun(head(xs));
-        for_each(fun, tail(xs));
-    } else {}
+        xs = tail(xs);
+    }
 }
 // list_to_string returns a string that represents the argument list.
 // It applies itself recursively on the elements of the given list.
@@ -176,9 +176,8 @@ function $filter<T>(pred: (arg: T) => boolean, xs: List<T>, acc: List<T>): List<
 export function filter<T>(pred: (arg: T) => boolean, xs: List<T>): List<T> {
     return $filter(pred, xs, null);
 }
-// enumerates numbers starting from start, assumed to be a number,
-// using a step size of 1, until the number exceeds end, assumed
-// to be a number
+// enumerates numbers starting from start,
+// using a step size of 1, until the number exceeds end.
 function $enum_list(start: number, end: number, acc: List<number>): List<number> {
   // Ensure that typechecking of reverse are done independently
   const rev = reverse;
@@ -228,4 +227,17 @@ export function fold_left<T, U>(f: (acc: U, arg: T) => U, initial: U, xs: List<T
 
 export function flatten<T>(xs: List<List<T>>) { 
     return accumulate(append, empty_list<T>(), xs);
+}
+
+export function all<T>(pred: (arg: T) => boolean, xs: List<T>): boolean {
+    return is_null(xs) ? true : pred(head(xs)) && all(pred, tail(xs));
+}
+
+// Belongs elsewhere.
+export function build_array<T>(size: number, content: (i: number) => T): Array<T> {
+    const result = Array<T>(size);
+    for (var i = 0; i < size; i = i + 1) {
+        result[i] = content(i);
+    }
+    return result;
 }
