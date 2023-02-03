@@ -75,12 +75,11 @@ export function build_list<T>(fun: (i: number) => T, n: number): List<T> {
 // to the elements of the second argument, assumed to be a list.
 // fun is applied element-by-element:
 // for_each(fun, list(1, 2)) results in the calls fun(1) and fun(2).
-// for_each returns true.
-function for_each<T, U>(fun: (arg: T) => U, xs: List<T>): void{
-  if (!is_null(xs)) {
-    fun(head(xs));
-    return for_each(fun, tail(xs));
-  } else {}
+export function for_each<T, U>(fun: (arg: T) => U, xs: List<T>): void {
+    if (!is_null(xs)) {
+        fun(head(xs));
+        for_each(fun, tail(xs));
+    } else {}
 }
 // list_to_string returns a string that represents the argument list.
 // It applies itself recursively on the elements of the given list.
