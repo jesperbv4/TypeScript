@@ -2,8 +2,6 @@ import { lg_permute_list, lg_permute_nodeLists, random_permutation, lg_kosaraju,
 import { is_null, list, pair , head, tail, List} from '../lib/list';
 import { member, length, for_each, map} from '../lib/list_prelude';
 import { lg_from_edges, EdgeList } from '../lib/graphs';
-import { type Queue, enqueue, empty, is_empty, head as q_head, dequeue} from '../lib/queue_array';
-import exp from 'constants';
 
 function list_to_array<T>(xs: List<T>):Array<T> {
     const xs_array: Array<T> = [];

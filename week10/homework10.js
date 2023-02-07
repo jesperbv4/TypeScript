@@ -124,3 +124,54 @@ function random_kosaraju(lg) {
     return lg_kosaraju(random_nodeLists, random_restartOrder);
 }
 exports.random_kosaraju = random_kosaraju;
+function stream_dfs_reachables(lg, restart_order) {
+    var colour = (0, list_prelude_1.build_array)(lg.size, function (_) { return white; });
+    function reachables(restart_order) {
+        var result = null;
+        function dfs_visit(current) {
+            if (colour[current] === white) {
+                result = (0, list_1.pair)(current, result);
+                colour[current] = grey;
+                (0, list_prelude_1.map)(dfs_visit, lg.adj[current]);
+                colour[current] = black;
+            }
+            else { }
+        }
+        function dfs_restart(initial) {
+            if (colour[initial] === white) {
+                dfs_visit(initial);
+            }
+            else { }
+        }
+        while (!(0, list_1.is_null)(restart_order)) {
+            dfs_restart((0, list_1.head)(restart_order));
+            restart_order = (0, list_1.tail)(restart_order);
+            if (!(0, list_1.is_null)(result)) {
+                return (0, list_1.pair)(result, function () { return stream_dfs_reachables(lg, restart_order); });
+            }
+            else { }
+        }
+        return null;
+    }
+    return reachables(restart_order);
+}
+function stream_kosaraju(lg) {
+    var rev_order = lg_dfs_reverse_finish_order(lg);
+    var lg_T = (0, graphs_1.lg_transpose)(lg);
+    return stream_dfs_reachables(lg_T, rev_order);
+}
+function stream_random_kosaraju(lg) {
+    var random_restartOrder = lg_permute_list((0, list_prelude_1.enum_list)(0, lg.size - 1));
+    var random_nodeLists = lg_permute_nodeLists(lg);
+    return stream_dfs_reachables(random_nodeLists, random_restartOrder);
+}
+var el = (0, list_1.list)((0, list_1.pair)(0, 1), (0, list_1.pair)(1, 2), (0, list_1.pair)(2, 3), (0, list_1.pair)(3, 0), (0, list_1.pair)(3, 4), (0, list_1.pair)(4, 6), (0, list_1.pair)(5, 6), (0, list_1.pair)(6, 7), (0, list_1.pair)(7, 5));
+var lg = (0, graphs_1.lg_from_edges)(8, el);
+var stream = stream_kosaraju(lg);
+var rstream = stream_random_kosaraju(lg);
+if (!(0, list_1.is_null)(stream) && !(0, list_1.is_null)(rstream)) {
+    console.log((0, list_1.tail)(stream)());
+    console.log((0, list_1.tail)(rstream)());
+}
+console.log(rstream);
+console.log(stream);
