@@ -137,7 +137,7 @@ function stream_dfs_reachables(lg: ListGraph, restart_order: List<number>): Stre
     const colour = build_array(lg.size,_ => white);
 
     function reachables(restart_order: List<number>): Stream<List<number>> {
-        var result: List<number> = null;
+        let result: List<number> = null;
 
         function dfs_visit(current: number): void {
             if (colour[current] === white ) {
@@ -147,20 +147,13 @@ function stream_dfs_reachables(lg: ListGraph, restart_order: List<number>): Stre
                 colour[current] = black;
                 } else {}
         }
-
-        function dfs_restart(initial: number): void {
+        while (!is_null(restart_order)) {
+            const initial = head(restart_order);
+            const next_node = tail(restart_order);
             if (colour[initial] === white) {
                 dfs_visit(initial);
-            } else {}
-        }
-
-        while (!is_null(restart_order)) {
-            const this_node = head(restart_order);
-            restart_order = tail(restart_order);
-            if (colour[this_node] === white) {
-                dfs_restart(this_node);
-                return pair(result, ()=> reachables(restart_order));
-            } else {}
+                return pair(result, ()=> reachables(next_node));
+            } else {restart_order = next_node;}
         } 
         return null
     }
@@ -174,25 +167,26 @@ function stream_kosaraju(lg: ListGraph): Stream<List<number>>{
 }
 
 function stream_random_kosaraju(lg: ListGraph): Stream<List<number>> {
-    const random_restartOrder = lg_permute_list(enum_list(0, lg.size - 1))
     const random_nodeLists = lg_permute_nodeLists(lg)
-    return  stream_dfs_reachables(random_nodeLists, random_restartOrder);
+    const random_restartOrder = lg_permute_list(enum_list(0, lg.size - 1))
+    const new_order = lg_dfs_reverse_finish_order(lg, random_restartOrder)
+    const lg_T = lg_transpose(random_nodeLists);
+    return  stream_dfs_reachables(lg_T, new_order);
 }
 
-
 const el:EdgeList = list(pair(0,1), pair(1,2), pair(2,3), pair(3,0),
-                pair(3,4), pair(4,6), 
+                pair(9,8), pair(4,8), pair(8,9),
                 pair(5,6), pair(6,7), pair(7,5));
 
-const lg = lg_from_edges(8, el);
+const lg = lg_from_edges(10, el);
+
 let stream = stream_kosaraju(lg)
-let lgk = lg_kosaraju(lg)
+let lgk = stream_random_kosaraju(lg)
 while (!is_null(stream) && !is_null(lgk)) {
     console.log(list_to_string(head(stream)))
     stream = tail(stream)()
     console.log(list_to_string(head(lgk)))
-    lgk = tail(lgk)
-    
+    lgk = tail(lgk)()  
 }
 
 
