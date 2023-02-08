@@ -1,7 +1,7 @@
 import { enqueue, empty, is_empty, type Prio_Queue, head as qhead, dequeue } from '../lib/prio_queue'
-import { lg_new, type ListGraph, lg_transpose, lg_from_edges, EdgeList } from '../lib/graphs'
-import { type List, type Pair, pair, tail, head, is_null, set_head, list } from "../lib/list";
-import { build_array, enum_list, for_each, map, length, list_to_string } from "../lib/list_prelude";
+import { lg_new, type ListGraph, lg_transpose } from '../lib/graphs'
+import { type List, type Pair, pair, tail, head, is_null, set_head } from "../lib/list";
+import { build_array, enum_list, for_each, map, length } from "../lib/list_prelude";
 
 const white = 1;
 const black = 2;
@@ -195,6 +195,7 @@ function stream_kosaraju(lg: ListGraph): Stream<List<number>>{
     const lg_T = lg_transpose(lg);       
     return stream_dfs_reachables(lg_T, rev_order);
 }
+
 /**
  * Given a ListGraph computes a stream in random order of it's SCCs
  * @param lg ListGraph 
@@ -208,29 +209,5 @@ function stream_random_kosaraju(lg: ListGraph): Stream<List<number>> {
     return  stream_dfs_reachables(lg_T, new_order);
 }
 
-
-const lg: ListGraph = {
-    adj: [
-        list(1,2,3),
-        list(0,2,3),
-        list(0,1,3),
-        list(0,1,2),
-        list(),
-        list(6,7),
-        list(5,7),
-        list(5,6),
-        list(9),
-        list(8)
-    ],
-    size: 10
-} 
-
-
-
-let lgk = lg_kosaraju(lg)
-while (!is_null(lgk)) {
-    console.log(list_to_string(head(lgk)))
-    lgk = tail(lgk)  
-}
 
 

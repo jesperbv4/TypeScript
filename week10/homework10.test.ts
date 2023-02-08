@@ -33,6 +33,7 @@ const lg: ListGraph = {
     ],
     size: 10
 } 
+
 test('random permutation has same elements in a new order', () => {
     const A = [0, 1, 2, 3];
     const perm = random_permutation(A.length);
