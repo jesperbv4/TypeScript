@@ -63,7 +63,8 @@ export function lg_kosaraju(lg: ListGraph,
                              lg_dfs_reverse_finish_order(lg, restart_order));
 }
 
-//Start of my code
+//Start of my code 
+//Assignment 1
 type Permutation = Array<number>;
 
 export function random_permutation(length: number): Permutation {
@@ -125,14 +126,14 @@ export function lg_permute_nodeLists(lg: ListGraph): ListGraph {
     return res
 }
 
+//Assignment 2
 export function random_kosaraju(lg: ListGraph): List<List<number>> {
     const random_nodeLists = lg_permute_nodeLists(lg)
     const random_restartOrder = lg_permute_list(enum_list(0, lg.size - 1))
-//    console.log(random_nodeLists);      //TEST
-//    console.log(random_restartOrder);   //TEST
     return  lg_kosaraju(random_nodeLists, random_restartOrder);
 }
 
+//Assignment 3
 type Stream<T> = Pair<T, () => Stream<T>> | null;
 
 function stream_dfs_reachables(lg: ListGraph, restart_order: List<number>): Stream<List<number>> {   
@@ -157,11 +158,13 @@ function stream_dfs_reachables(lg: ListGraph, restart_order: List<number>): Stre
         }
 
         while (!is_null(restart_order)) {
-            dfs_restart(head(restart_order));
+            const this_node = head(restart_order);
             restart_order = tail(restart_order);
-            if (!is_null(result)) {
+            if (colour[this_node] === white) {
+                dfs_restart(this_node);
                 return pair(result, ()=> stream_dfs_reachables(lg, restart_order));
             } else {}
+            
         } 
         return null
     }
@@ -179,8 +182,6 @@ function stream_random_kosaraju(lg: ListGraph): Stream<List<number>> {
     const random_nodeLists = lg_permute_nodeLists(lg)
     return  stream_dfs_reachables(random_nodeLists, random_restartOrder);
 }
-
-
 
 
 const el:EdgeList = list(pair(0,1), pair(1,2), pair(2,3), pair(3,0),
