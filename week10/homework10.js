@@ -116,11 +116,10 @@ function lg_permute_nodeLists(lg) {
     return res;
 }
 exports.lg_permute_nodeLists = lg_permute_nodeLists;
+//Assignment 2
 function random_kosaraju(lg) {
     var random_nodeLists = lg_permute_nodeLists(lg);
     var random_restartOrder = lg_permute_list((0, list_prelude_1.enum_list)(0, lg.size - 1));
-    //    console.log(random_nodeLists);      //TEST
-    //    console.log(random_restartOrder);   //TEST
     return lg_kosaraju(random_nodeLists, random_restartOrder);
 }
 exports.random_kosaraju = random_kosaraju;
@@ -137,19 +136,21 @@ function stream_dfs_reachables(lg, restart_order) {
             }
             else { }
         }
-        function dfs_restart(initial) {
+        var _loop_1 = function () {
+            var initial = (0, list_1.head)(restart_order);
+            var next_node = (0, list_1.tail)(restart_order);
             if (colour[initial] === white) {
                 dfs_visit(initial);
+                return { value: (0, list_1.pair)(result, function () { return reachables(next_node); }) };
             }
-            else { }
-        }
+            else {
+                restart_order = next_node;
+            }
+        };
         while (!(0, list_1.is_null)(restart_order)) {
-            dfs_restart((0, list_1.head)(restart_order));
-            restart_order = (0, list_1.tail)(restart_order);
-            if (!(0, list_1.is_null)(result)) {
-                return (0, list_1.pair)(result, function () { return stream_dfs_reachables(lg, restart_order); });
-            }
-            else { }
+            var state_1 = _loop_1();
+            if (typeof state_1 === "object")
+                return state_1.value;
         }
         return null;
     }
@@ -161,17 +162,29 @@ function stream_kosaraju(lg) {
     return stream_dfs_reachables(lg_T, rev_order);
 }
 function stream_random_kosaraju(lg) {
-    var random_restartOrder = lg_permute_list((0, list_prelude_1.enum_list)(0, lg.size - 1));
     var random_nodeLists = lg_permute_nodeLists(lg);
-    return stream_dfs_reachables(random_nodeLists, random_restartOrder);
+    var random_restartOrder = lg_permute_list((0, list_prelude_1.enum_list)(0, lg.size - 1));
+    var new_order = lg_dfs_reverse_finish_order(lg, random_restartOrder);
+    var lg_T = (0, graphs_1.lg_transpose)(random_nodeLists);
+    return stream_dfs_reachables(lg_T, new_order);
 }
-var el = (0, list_1.list)((0, list_1.pair)(0, 1), (0, list_1.pair)(1, 2), (0, list_1.pair)(2, 3), (0, list_1.pair)(3, 0), (0, list_1.pair)(3, 4), (0, list_1.pair)(4, 6), (0, list_1.pair)(5, 6), (0, list_1.pair)(6, 7), (0, list_1.pair)(7, 5));
-var lg = (0, graphs_1.lg_from_edges)(8, el);
-var stream = stream_kosaraju(lg);
-var rstream = stream_random_kosaraju(lg);
-if (!(0, list_1.is_null)(stream) && !(0, list_1.is_null)(rstream)) {
-    console.log((0, list_1.tail)(stream)());
-    console.log((0, list_1.tail)(rstream)());
+var lg_t = {
+    adj: [
+        (0, list_1.list)(1, 2, 3),
+        (0, list_1.list)(0, 2, 3),
+        (0, list_1.list)(0, 1, 3),
+        (0, list_1.list)(0, 1, 2),
+        (0, list_1.list)(),
+        (0, list_1.list)(6, 7),
+        (0, list_1.list)(5, 7),
+        (0, list_1.list)(5, 6),
+        (0, list_1.list)(9),
+        (0, list_1.list)(8)
+    ],
+    size: 10
+};
+var lgk = lg_kosaraju(lg_t);
+while (!(0, list_1.is_null)(lgk)) {
+    console.log((0, list_prelude_1.list_to_string)((0, list_1.head)(lgk)));
+    lgk = (0, list_1.tail)(lgk);
 }
-console.log(rstream);
-console.log(stream);

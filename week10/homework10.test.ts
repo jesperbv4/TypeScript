@@ -1,8 +1,12 @@
 import { lg_permute_list, lg_permute_nodeLists, random_permutation, lg_kosaraju, random_kosaraju } from './homework10';
-import { is_null, list, pair , head, tail, List} from '../lib/list';
-import { member, length, for_each, map} from '../lib/list_prelude';
-import { lg_from_edges, EdgeList } from '../lib/graphs';
+import { is_null, list, head, tail, List} from '../lib/list';
+import { ListGraph } from '../lib/graphs';
 
+/**
+ * Takes a List and tranforms it to an Array
+ * @param xs a list 
+ * @returns an Array with the same elements and order as xs
+ */
 function list_to_array<T>(xs: List<T>):Array<T> {
     const xs_array: Array<T> = [];
     while(!is_null(xs)) {
@@ -12,26 +16,52 @@ function list_to_array<T>(xs: List<T>):Array<T> {
     return xs_array;
 }
 
-test('Permutation is returning the correct elements in a new order', () => {
+//lg for testing
+//SCCs = list(0,1,2,3), list(4), list(5,6,7), list(8,9)
+const lg: ListGraph = {
+    adj: [
+        list(1,2,3),
+        list(0,2,3),
+        list(0,1,3),
+        list(0,1,2),
+        list(),
+        list(6,7),
+        list(5,7),
+        list(5,6),
+        list(9),
+        list(8)
+    ],
+    size: 10
+} 
+test('random permutation has same elements in a new order', () => {
     const A = [0, 1, 2, 3];
-    const perm1 = random_permutation(A.length)
-    const perm2 = random_permutation(A.length)
+    const perm = random_permutation(A.length);
     for(let i = 0; i < A.length; i++) {
-        expect(perm1).toContain(i)
+        expect(perm).toContain(i);
     }
-    expect(perm1.length).toBe(A.length);
-    expect(perm1).not.toStrictEqual(A);
-    expect(perm1).not.toStrictEqual(perm2);
-})
+    expect(perm.length).toBe(A.length);
+    expect(perm).not.toStrictEqual(A);
+});
 
-const el:EdgeList = list(pair(0,1), pair(1,2), pair(2,3), pair(3,0),
-                pair(3,4), pair(4,6), 
-                pair(5,6), pair(6,7), pair(7,5));
+test('list permutation has same elements in a new order', () => {
+    const reference = [1,2,3,4];
+    let p_list = lg_permute_list(list(1,2,3,4));
+    while(!is_null(p_list)) {
+        expect(reference).toContain(head(p_list));
+        p_list = tail(p_list);
+    }
+});
 
-const lg = lg_from_edges(8, el);
+test('nodelists has same element in a new order', () => {
+    const reference = list_to_array(lg.adj[0]);
+    const p_nodeLists = lg_permute_nodeLists(lg);
+    const n_list1 = list_to_array(p_nodeLists.adj[0]);
+    expect(reference).not.toStrictEqual(n_list1)
+    expect(reference).toStrictEqual(n_list1.sort())
+    
+});
 
-
-test('Has the same SCCs', () => {
+test('random and regular kosaraju has the same SCCs', () => {
     const scc_list1 = list_to_array(lg_kosaraju(lg)).sort();
     const scc_list2 = list_to_array(random_kosaraju(lg)).sort();
     for (let i = 0; i < scc_list1.length; i ++) {

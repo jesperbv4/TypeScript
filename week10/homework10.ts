@@ -7,6 +7,7 @@ const white = 1;
 const black = 2;
 const grey  = 3;
 
+//Code written by Johannes from lecture10b
 function lg_dfs_reverse_finish_order({adj, size}: ListGraph, 
                                      restart_order: List<number> = null): List<number> {        
     var result: List<number> = null;
@@ -65,6 +66,11 @@ export function lg_kosaraju(lg: ListGraph,
 //Assignment 1
 type Permutation = Array<number>;
 
+/**
+ * Takes a number and makes a permutation 
+ * @param length number: the length for the Array
+ * @returns Array: an Array with a permutation of the numbers from 0-(number-1)
+ */
 export function random_permutation(length: number): Permutation {
 
     function getRandomInt(min: number, max: number): number {
@@ -89,6 +95,11 @@ export function random_permutation(length: number): Permutation {
     return result;
 }
 
+/**
+ * Takes a List and makes a permutation of the order of the elements
+ * @param xs List: the list to be permuted
+ * @returns List: a list with a new permutation of xs 
+ */
 export function lg_permute_list<T>(xs: List<T>): List<T> {
     
     function reorder<T>(xs: List<T>): Prio_Queue<T> {
@@ -114,7 +125,11 @@ export function lg_permute_list<T>(xs: List<T>): List<T> {
     }
     return p_list(reorder(xs));
 }
-
+ /**
+  * Permutes the nodeLists of a ListGragh
+  * @param lg ListGraph: The graph with nodeLists to permute
+  * @returns Listgraph: A new ListGraph with it's nodeLists permuted
+  */
 export function lg_permute_nodeLists(lg: ListGraph): ListGraph {
     const res = lg_new(lg.size);
     for (let i = 0; i < lg.size; i++) {
@@ -124,6 +139,11 @@ export function lg_permute_nodeLists(lg: ListGraph): ListGraph {
 }
 
 //Assignment 2
+/**
+ * Creating random orders to pass to kosaraju algorithm
+ * @param lg ListGraph: The graph to pass to the algorithm
+ * @returns List: a list where each element is a list of SCC in a random order
+ */
 export function random_kosaraju(lg: ListGraph): List<List<number>> {
     const random_nodeLists = lg_permute_nodeLists(lg)
     const random_restartOrder = lg_permute_list(enum_list(0, lg.size - 1))
@@ -132,7 +152,12 @@ export function random_kosaraju(lg: ListGraph): List<List<number>> {
 
 //Assignment 3
 type Stream<T> = Pair<T, () => Stream<T>> | null;
-
+/**
+ * A function that given a ListGraph returns it's SCC as a stream
+ * @param lg the graph to find SCCs
+ * @param restart_order the order to check the nodes
+ * @returns Stream: A stream of SCCs from a ListGraph
+ */
 function stream_dfs_reachables(lg: ListGraph, restart_order: List<number>): Stream<List<number>> {
     const colour = build_array(lg.size,_ => white);
 
@@ -140,7 +165,7 @@ function stream_dfs_reachables(lg: ListGraph, restart_order: List<number>): Stre
         let result: List<number> = null;
 
         function dfs_visit(current: number): void {
-            if (colour[current] === white ) {
+            if (colour[current] === white) {
                 result = pair(current, result);
                 colour[current] = grey;
                 map(dfs_visit, lg.adj[current]);
@@ -160,12 +185,21 @@ function stream_dfs_reachables(lg: ListGraph, restart_order: List<number>): Stre
     return reachables(restart_order);
 }
 
+/**
+ * Given a ListGraph computes a stream of it's SCCs
+ * @param lg ListGraph 
+ * @returns a stream of SCCs
+ */
 function stream_kosaraju(lg: ListGraph): Stream<List<number>>{
     const rev_order = lg_dfs_reverse_finish_order(lg);
     const lg_T = lg_transpose(lg);       
     return stream_dfs_reachables(lg_T, rev_order);
 }
-
+/**
+ * Given a ListGraph computes a stream in random order of it's SCCs
+ * @param lg ListGraph 
+ * @returns a stream of SCCs in random order
+ */
 function stream_random_kosaraju(lg: ListGraph): Stream<List<number>> {
     const random_nodeLists = lg_permute_nodeLists(lg)
     const random_restartOrder = lg_permute_list(enum_list(0, lg.size - 1))
@@ -174,19 +208,29 @@ function stream_random_kosaraju(lg: ListGraph): Stream<List<number>> {
     return  stream_dfs_reachables(lg_T, new_order);
 }
 
-const el:EdgeList = list(pair(0,1), pair(1,2), pair(2,3), pair(3,0),
-                pair(9,8), pair(4,8), pair(8,9),
-                pair(5,6), pair(6,7), pair(7,5));
 
-const lg = lg_from_edges(10, el);
+const lg: ListGraph = {
+    adj: [
+        list(1,2,3),
+        list(0,2,3),
+        list(0,1,3),
+        list(0,1,2),
+        list(),
+        list(6,7),
+        list(5,7),
+        list(5,6),
+        list(9),
+        list(8)
+    ],
+    size: 10
+} 
 
-let stream = stream_kosaraju(lg)
-let lgk = stream_random_kosaraju(lg)
-while (!is_null(stream) && !is_null(lgk)) {
-    console.log(list_to_string(head(stream)))
-    stream = tail(stream)()
+
+
+let lgk = lg_kosaraju(lg)
+while (!is_null(lgk)) {
     console.log(list_to_string(head(lgk)))
-    lgk = tail(lgk)()  
+    lgk = tail(lgk)  
 }
 
 
