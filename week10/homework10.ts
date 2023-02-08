@@ -1,8 +1,7 @@
 import { enqueue, empty, is_empty, type Prio_Queue, head as qhead, dequeue } from '../lib/prio_queue'
 import { lg_new, type ListGraph, lg_transpose, lg_from_edges, EdgeList } from '../lib/graphs'
 import { type List, type Pair, pair, tail, head, is_null, set_head, list } from "../lib/list";
-import { build_array, enum_list, for_each, map, length, list_ref } from "../lib/list_prelude";
-
+import { build_array, enum_list, for_each, map, length, list_to_string } from "../lib/list_prelude";
 
 const white = 1;
 const black = 2;
@@ -28,7 +27,6 @@ function lg_dfs_reverse_finish_order({adj, size}: ListGraph,
     return result;
 }
 
-
 function lg_dfs_reachables({adj, size}: ListGraph, 
                            restart_order: List<number> = null): List<List<number>> {        
     var result: List<List<number>> = null;
@@ -39,12 +37,12 @@ function lg_dfs_reachables({adj, size}: ListGraph,
     } else {}
 
     function dfs_visit(current: number): void {
-    if (colour[current] === white && !is_null(result)) {
-        set_head(result, pair(current, head(result)));
-        colour[current] = grey;
-        map(dfs_visit, adj[current]);
-        colour[current] = black;
-        } else {}
+        if (colour[current] === white && !is_null(result)) {
+            set_head(result, pair(current, head(result)));
+            colour[current] = grey;
+            map(dfs_visit, adj[current]);
+            colour[current] = black;
+            } else {}
     }
 
     function dfs_restart(initial: number): void {
@@ -79,9 +77,8 @@ export function random_permutation(length: number): Permutation {
         A[i] = A[j];
         A[j] = temp;
     }
-      
-    const result = Array<number>(length)
     
+    const result = Array<number>(length)
     for (let i = 0; i < length; i++) {
         result[i] = i;
     }
@@ -136,12 +133,12 @@ export function random_kosaraju(lg: ListGraph): List<List<number>> {
 //Assignment 3
 type Stream<T> = Pair<T, () => Stream<T>> | null;
 
-function stream_dfs_reachables(lg: ListGraph, restart_order: List<number>): Stream<List<number>> {   
-    const colour = build_array(lg.size, _ => white);
-    
+function stream_dfs_reachables(lg: ListGraph, restart_order: List<number>): Stream<List<number>> {
+    const colour = build_array(lg.size,_ => white);
+
     function reachables(restart_order: List<number>): Stream<List<number>> {
         var result: List<number> = null;
-        
+
         function dfs_visit(current: number): void {
             if (colour[current] === white ) {
                 result = pair(current, result);
@@ -150,7 +147,7 @@ function stream_dfs_reachables(lg: ListGraph, restart_order: List<number>): Stre
                 colour[current] = black;
                 } else {}
         }
-        
+
         function dfs_restart(initial: number): void {
             if (colour[initial] === white) {
                 dfs_visit(initial);
@@ -162,14 +159,13 @@ function stream_dfs_reachables(lg: ListGraph, restart_order: List<number>): Stre
             restart_order = tail(restart_order);
             if (colour[this_node] === white) {
                 dfs_restart(this_node);
-                return pair(result, ()=> stream_dfs_reachables(lg, restart_order));
+                return pair(result, ()=> reachables(restart_order));
             } else {}
-            
         } 
         return null
     }
     return reachables(restart_order);
-} 
+}
 
 function stream_kosaraju(lg: ListGraph): Stream<List<number>>{
     const rev_order = lg_dfs_reverse_finish_order(lg);
@@ -189,12 +185,14 @@ const el:EdgeList = list(pair(0,1), pair(1,2), pair(2,3), pair(3,0),
                 pair(5,6), pair(6,7), pair(7,5));
 
 const lg = lg_from_edges(8, el);
-const stream = stream_kosaraju(lg)
-const rstream = stream_random_kosaraju(lg)
-if (!is_null(stream) && !is_null(rstream)) {
-    console.log(tail(stream)())
-    console.log(tail(rstream)());
+let stream = stream_kosaraju(lg)
+let lgk = lg_kosaraju(lg)
+while (!is_null(stream) && !is_null(lgk)) {
+    console.log(list_to_string(head(stream)))
+    stream = tail(stream)()
+    console.log(list_to_string(head(lgk)))
+    lgk = tail(lgk)
+    
 }
-console.log(rstream)
-console.log(stream)
+
 
